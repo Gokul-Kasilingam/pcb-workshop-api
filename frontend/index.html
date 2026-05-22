@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PCB Workshop Control</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main id="loginView" class="login-shell">
+    <section class="login-card">
+      <div class="brand-pill">PCB Workshop Admin</div>
+      <h1>Registration, Teams, Quiz & Games</h1>
+      <p>Login to control the one-day PCB Design Basics workshop.</p>
+      <form id="loginForm" class="form-grid single">
+        <label>Username<input id="loginUsername" value="admin" autocomplete="username" required></label>
+        <label>Password<input id="loginPassword" type="password" value="PCB@123" autocomplete="current-password" required></label>
+        <button class="primary" type="submit">Login</button>
+      </form>
+      <p id="loginMessage" class="message"></p>
+    </section>
+  </main>
+
+  <div id="appView" class="app hidden">
+    <aside class="sidebar">
+      <div class="logo-box">
+        <span class="logo-mark">PCB</span>
+        <div>
+          <strong>Workshop</strong>
+          <small>Admin Panel</small>
+        </div>
+      </div>
+      <nav>
+        <button data-tab="dashboard" class="active">Dashboard</button>
+        <button data-tab="registration">Registration</button>
+        <button data-tab="teams">Teams</button>
+        <button data-tab="quiz">Quiz</button>
+        <button data-tab="games">Games</button>
+        <button data-tab="leaderboard">Leaderboard</button>
+        <button data-tab="csv">CSV Database</button>
+        <button data-tab="settings">Settings</button>
+      </nav>
+      <button id="logoutBtn" class="ghost logout">Logout</button>
+    </aside>
+
+    <section class="content">
+      <header class="topbar">
+        <div>
+          <h2 id="pageTitle">Dashboard</h2>
+          <p>Run registration, team formation, quiz, games and gifts scoring from one screen.</p>
+        </div>
+        <button id="refreshBtn" class="ghost">Refresh</button>
+      </header>
+
+      <section id="dashboard" class="tab active">
+        <div class="cards" id="statsCards"></div>
+        <div class="panel">
+          <h3>Workshop Flow</h3>
+          <div class="timeline">
+            <span>Intro PPT</span><span>PCB Basics PPT</span><span>Schematic Lab</span><span>PCB Tool Demo</span><span>Quiz & Games</span><span>Gifts</span>
+          </div>
+        </div>
+      </section>
+
+      <section id="registration" class="tab">
+        <div class="panel">
+          <h3>Add Participant</h3>
+          <form id="participantForm" class="form-grid">
+            <label>Name<input name="name" required placeholder="Student name"></label>
+            <label>Email<input name="email" type="email" placeholder="email@example.com"></label>
+            <label>Phone<input name="phone" placeholder="Mobile number"></label>
+            <label>College<input name="college" placeholder="College name"></label>
+            <label>Department<input name="department" placeholder="ECE / EEE / CSE"></label>
+            <label>Year<input name="year" placeholder="1st / 2nd / 3rd / 4th"></label>
+            <button class="primary" type="submit">Register Student</button>
+          </form>
+          <p id="participantMsg" class="message"></p>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h3>Participants</h3><button onclick="loadParticipants()" class="ghost">Reload</button></div>
+          <div class="table-wrap"><table id="participantsTable"></table></div>
+        </div>
+      </section>
+
+      <section id="teams" class="tab">
+        <div class="panel">
+          <h3>Generate Teams</h3>
+          <form id="teamForm" class="form-grid compact">
+            <label>Team Size<input name="team_size" type="number" value="6" min="2" max="15"></label>
+            <label>Team Prefix<input name="team_prefix" value="Team"></label>
+            <label class="check"><input name="shuffle_members" type="checkbox" checked> Shuffle participants</label>
+            <button class="primary" type="submit">Generate Teams</button>
+            <button class="danger" type="button" id="resetTeamsBtn">Reset Teams</button>
+          </form>
+          <p id="teamMsg" class="message"></p>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h3>Team Members</h3><button onclick="loadTeams()" class="ghost">Reload</button></div>
+          <div class="table-wrap"><table id="teamMembersTable"></table></div>
+        </div>
+      </section>
+
+      <section id="quiz" class="tab">
+        <div class="panel">
+          <h3>Add Quiz Question</h3>
+          <form id="questionForm" class="form-grid">
+            <label class="wide">Question<input name="question" required placeholder="Example: What does PCB stand for?"></label>
+            <label>Option A<input name="option_a" required></label>
+            <label>Option B<input name="option_b" required></label>
+            <label>Option C<input name="option_c" required></label>
+            <label>Option D<input name="option_d" required></label>
+            <label>Correct<select name="correct_option"><option>A</option><option>B</option><option>C</option><option>D</option></select></label>
+            <label>Points<input name="points" type="number" value="5" min="1"></label>
+            <button class="primary" type="submit">Add Question</button>
+          </form>
+          <p id="questionMsg" class="message"></p>
+        </div>
+        <div class="panel">
+          <h3>Submit Team Quiz Answers</h3>
+          <label>Team<select id="quizTeamSelect"></select></label>
+          <div id="quizQuestionList" class="question-list"></div>
+          <button id="submitQuizBtn" class="primary">Submit Quiz</button>
+          <p id="quizMsg" class="message"></p>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h3>Quiz Results</h3><button onclick="loadQuiz()" class="ghost">Reload</button></div>
+          <div class="table-wrap"><table id="quizResultsTable"></table></div>
+        </div>
+      </section>
+
+      <section id="games" class="tab">
+        <div class="panel">
+          <h3>Add Game Score</h3>
+          <form id="gameScoreForm" class="form-grid compact">
+            <label>Team<select name="team_id" id="gameTeamSelect"></select></label>
+            <label>Game Name<select name="game_name">
+              <option>Schematic Detective</option>
+              <option>Placement Challenge</option>
+              <option>Routing Race</option>
+              <option>PCB Rescue Mission</option>
+              <option>Best Presenter</option>
+            </select></label>
+            <label>Score<input name="score" type="number" min="0" value="0"></label>
+            <label>Max Score<input name="max_score" type="number" min="1" value="100"></label>
+            <label class="wide">Notes<input name="notes" placeholder="Reason / remark"></label>
+            <button class="primary" type="submit">Save Score</button>
+          </form>
+          <p id="gameMsg" class="message"></p>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><h3>Game Scores</h3><button onclick="loadGames()" class="ghost">Reload</button></div>
+          <div class="table-wrap"><table id="gameScoresTable"></table></div>
+        </div>
+      </section>
+
+      <section id="leaderboard" class="tab">
+        <div class="panel hero-panel">
+          <h3>Live Leaderboard</h3>
+          <p>Leaderboard is calculated from best quiz score + best score per game.</p>
+          <div class="table-wrap"><table id="leaderboardTable"></table></div>
+        </div>
+      </section>
+
+      <section id="csv" class="tab">
+        <div class="panel">
+          <h3>CSV Database</h3>
+          <p>Download or import the CSV tables. All workshop data is stored in CSV files on the server.</p>
+          <div id="csvButtons" class="csv-grid"></div>
+          <button id="downloadAllCsvBtn" class="primary">Download All CSV as ZIP</button>
+        </div>
+      </section>
+
+      <section id="settings" class="tab">
+        <div class="panel">
+          <h3>Change Admin Password</h3>
+          <form id="passwordForm" class="form-grid compact">
+            <label>Username<input name="username" value="admin" required></label>
+            <label>Current Password<input name="current_password" type="password" required></label>
+            <label>New Password<input name="new_password" type="password" minlength="6" required></label>
+            <button class="primary" type="submit">Change Password</button>
+          </form>
+          <p id="passwordMsg" class="message"></p>
+        </div>
+        <div class="panel warning-panel">
+          <h3>Deployment Note</h3>
+          <p>For Render deployment, add a persistent disk and set <code>DATA_DIR=/var/data</code>. Without persistent disk, CSV data can reset after redeploy.</p>
+        </div>
+      </section>
+    </section>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

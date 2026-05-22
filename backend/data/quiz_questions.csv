@@ -1,0 +1,6 @@
+question_id,question,option_a,option_b,option_c,option_d,correct_option,points
+1,What does PCB stand for?,Printed Circuit Board,Power Control Box,Plastic Circuit Base,Printed Cable Board,A,5
+2,Which PCB part carries current and signals?,Silkscreen,Copper trace,Solder mask only,Board outline,B,5
+3,Why is a resistor used with an LED?,To increase weight,To limit current,To make PCB green,To create mounting holes,B,5
+4,What does a schematic mainly show?,Physical board color,Manufacturing price,What connects to what,Gift winners,C,5
+5,What is DRC in PCB design?,Design Rule Check,Direct Routing Cable,Digital Repair Circuit,Design Review Cost,A,5

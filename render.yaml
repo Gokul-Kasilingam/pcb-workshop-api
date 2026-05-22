@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: pcb-workshop-api
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: TOKEN_SECRET
+        generateValue: true
+      - key: ADMIN_USERNAME
+        value: admin
+      - key: ADMIN_PASSWORD
+        value: PCB@123
+      - key: DATA_DIR
+        value: /var/data
+    disk:
+      name: pcb-workshop-csv-data
+      mountPath: /var/data
+      sizeGB: 1
